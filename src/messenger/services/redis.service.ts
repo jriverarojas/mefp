@@ -27,5 +27,9 @@ export class RedisService {
         return id;
     }
 
+    async getFirstFromQueue(): Promise<any> {    
+        const item = await this.readerRedis.brpop('queue3', 0);
+        return JSON.parse(item[1]);
+    }
 
 }
