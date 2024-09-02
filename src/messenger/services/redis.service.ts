@@ -28,8 +28,16 @@ export class RedisService {
     }
 
     async getFirstFromQueue(): Promise<any> {    
-        const item = await this.readerRedis.brpop('queue3', 0);
+        const item = await this.readerRedis.brpop('queue3', 3);
         return JSON.parse(item[1]);
+    }
+
+    async consumeFromQueue(): Promise<any> {    
+        const item = await this.readerRedis.brpop('queue3', 3);
+        if (item) {
+            return JSON.parse(item[1]);
+        }
+        return null;
     }
 
 }
