@@ -1,11 +1,13 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { RedisService } from "./redis.service";
+import { QueueService } from "./queue.service";
 
 @Injectable()
 export class WorkerService implements OnModuleInit, OnModuleDestroy {
     private isRunning: boolean = true;
     constructor(
         private readonly redisService: RedisService,
+        private readonly queueService: QueueService,
         
     ) {}
 
@@ -25,7 +27,7 @@ export class WorkerService implements OnModuleInit, OnModuleDestroy {
             
             if (task) {
                 try {
-                    console.log('NEW TASK: ', new Date(), task);
+                    this.queueService.processTask(task);
                 } catch (error) {
                     console.error('Failed to process task: ', task, error);
                 }
