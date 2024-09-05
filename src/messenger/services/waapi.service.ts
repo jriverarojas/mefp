@@ -23,8 +23,7 @@ export class WaapiService {
         if (!instance) {
             throw new Error(`Instance ID: ${taskPayload.instance} not found`)
         }
-        console.log('CONFIG!!!!!1', config, config.sendUrl, config.apiKey);
-        const response = await this.sendMessage(config, instance.externalId, taskPayload.toFrom, taskPayload.payload);
+        const response = await this.sendMessage(config, instance.externalId, taskPayload.toFrom, taskPayload.message);
     }
 
     async sendMessage(config: any, externalId: string, toFrom: string, message: string) {
