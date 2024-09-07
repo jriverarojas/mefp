@@ -19,8 +19,9 @@ export class WaapiService {
             await this.handleOutgoingMessage(config, taskPayload);
         } else if (taskPayload.type === 'in') {
             console.log('INCOMING!!!!!', taskPayload);
-        } else {
             await this.handleIncommingMessage(config, taskPayload);
+        } else {
+            throw new Error(`Not implemented`)
         }
     }
 
@@ -56,7 +57,7 @@ export class WaapiService {
         //save message
 
         //call to openai endpoints
-        
+
         const message = await this.messageService.createMessage(thread, taskPayload.data.message.body, taskPayload.id, 'incoming');
     }
 
