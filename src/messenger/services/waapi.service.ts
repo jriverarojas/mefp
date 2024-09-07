@@ -17,6 +17,8 @@ export class WaapiService {
     async execute(config: any, taskPayload:any): Promise<void> {
         if (taskPayload.type === 'out') {
             await this.handleOutgoingMessage(config, taskPayload);
+        } else if (taskPayload.type === 'in') {
+            console.log('INCOMING!!!!!', taskPayload);
         } else {
             throw new Error(`not implemented yet`);
         }
