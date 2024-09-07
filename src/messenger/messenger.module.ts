@@ -9,14 +9,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Queue } from './entities/queue.entity';
 import { Channel } from './entities/channel.entity';
 import { Instance } from './entities/instance.entity';
+import { Thread } from './entities/thread.entity';
+import { Message } from './entities/message.entity';
+import { ThreadService } from './services/thread.service';
+import { MessageService } from './services/message.service';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Queue, Channel, Instance]),
+    TypeOrmModule.forFeature([Queue, Channel, Instance, Thread, Message]),
     ConfigModule
   ],
-  providers: [RedisService, WorkerService, QueueService, WaapiService],
+  providers: [RedisService, WorkerService, QueueService, WaapiService, ThreadService, MessageService],
   controllers: [QueueController]
   
 })

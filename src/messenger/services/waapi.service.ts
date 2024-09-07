@@ -3,11 +3,15 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Instance } from "../entities/instance.entity";
 import { Repository } from "typeorm";
 import axios from "axios";
+import { ThreadService } from "./thread.service";
+import { MessageService } from "./message.service";
 
 @Injectable()
 export class WaapiService {
     constructor(
         @InjectRepository(Instance) private readonly instanceRepository: Repository<Instance>,
+        private readonly threadService: ThreadService,
+        private readonly messageService: MessageService,
     ){}
 
     async execute(config: any, taskPayload:any): Promise<void> {
@@ -23,6 +27,10 @@ export class WaapiService {
         if (!instance) {
             throw new Error(`Instance ID: ${taskPayload.instance} not found`)
         }
+
+        //buscar o crear un thread
+        const { thread } = await this.threadService.findOrCreateThread(instance, taskPayload.toFrom);
+        const message = await this.messageService.createMessage(thread, taskPayload.message, taskPayload.id, 'outgoing', taskPayload.refId);
         const response = await this.sendMessage(config, instance.externalId, taskPayload.toFrom, taskPayload.message);
     }
 
