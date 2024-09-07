@@ -22,7 +22,7 @@ export class Message {
     @Column()
     type: string;//incoming, outgoing
 
-    @Column()
+    @Column({ nullable: true })
     refId?: string;
 
     @Column()
