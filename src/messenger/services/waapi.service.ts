@@ -20,7 +20,7 @@ export class WaapiService {
         } else if (taskPayload.type === 'in') {
             console.log('INCOMING!!!!!', taskPayload);
         } else {
-            throw new Error(`not implemented yet`);
+            await this.handleIncommingMessage(config, taskPayload);
         }
     }
 
@@ -34,6 +34,30 @@ export class WaapiService {
         const { thread } = await this.threadService.findOrCreateThread(instance, taskPayload.toFrom);
         const message = await this.messageService.createMessage(thread, taskPayload.message, taskPayload.id, 'outgoing', taskPayload.refId);
         const response = await this.sendMessage(config, instance.externalId, taskPayload.toFrom, taskPayload.message);
+    }
+
+    async handleIncommingMessage(config: any, taskPayload:any): Promise<void> {
+        const instance = await this.instanceRepository.findOne({ where: { id: taskPayload.instance }});
+        const from = taskPayload.data.message.from.split('@')[0];
+        if (!instance) {
+            throw new Error(`Instance ID: ${taskPayload.instance} not found`)
+        }
+
+        //buscar o crear un thread
+        const { isNewThread, thread } = await this.threadService.findOrCreateThread(instance, from);
+
+        //getAssistant
+        if (isNewThread) {
+            console.log('Assign assistant');
+        }
+
+        //if no assistant ... no hay un asistente disponible en este moemento...
+
+        //save message
+
+        //call to openai endpoints
+        
+        const message = await this.messageService.createMessage(thread, taskPayload.data.message.body, taskPayload.id, 'incoming');
     }
 
     async sendMessage(config: any, externalId: string, toFrom: string, message: string) {

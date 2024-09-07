@@ -12,7 +12,7 @@ export class MessageService {
         private readonly messageRepository: Repository<Message>
     ) {}
 
-    async createMessage(thread: Thread, message: string, queueId: string, type: string, refId: string): Promise<any> {
+    async createMessage(thread: Thread, message: string, queueId: string, type: string, refId?: string): Promise<any> {
         const messageObj = this.messageRepository.create({
             thread,
             message,
