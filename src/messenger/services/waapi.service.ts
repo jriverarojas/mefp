@@ -65,6 +65,7 @@ export class WaapiService {
                     channel: 'waapi',
                     instance: `${instance.id}`
                 });
+                return;
             }
             thread.assistants = [assistant];
             await this.threadRepository.save(thread);
