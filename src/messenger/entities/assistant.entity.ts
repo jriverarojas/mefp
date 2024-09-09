@@ -1,5 +1,4 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Instance } from "./instance.entity";
 import { Thread } from "./thread.entity";
 import { InstanceAssistant } from "./instance-assistant.entity";
 

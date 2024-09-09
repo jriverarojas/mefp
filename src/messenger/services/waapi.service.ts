@@ -5,13 +5,19 @@ import { Repository } from "typeorm";
 import axios from "axios";
 import { ThreadService } from "./thread.service";
 import { MessageService } from "./message.service";
+import { AssistantService } from "./assistant.service";
+import { RedisService } from "./redis.service";
+import { Thread } from "../entities/thread.entity";
 
 @Injectable()
 export class WaapiService {
     constructor(
         @InjectRepository(Instance) private readonly instanceRepository: Repository<Instance>,
+        @InjectRepository(Thread) private readonly threadRepository: Repository<Thread>,
         private readonly threadService: ThreadService,
         private readonly messageService: MessageService,
+        private readonly assistantService: AssistantService,
+        private readonly redisService: RedisService,
     ){}
 
     async execute(config: any, taskPayload:any): Promise<void> {
@@ -49,12 +55,28 @@ export class WaapiService {
 
         //getAssistant
         if (isNewThread) {
-            console.log('Assign assistant');
+            
+            let assistant = await this.assistantService.getAssistant(instance.id);
+            if (!assistant) {
+                const queueId = await this.redisService.addToQueue({
+                    toFrom: from,
+                    message: 'No tenemos agentes para atenderte en este momento, porfavor intenta mas tarde.',
+                    type: 'out',
+                    channel: 'waapi',
+                    instance: `${instance.id}`
+                });
+            }
+            thread.assistants = [assistant];
+            await this.threadRepository.save(thread);
         }
 
-        //if no assistant ... no hay un asistente disponible en este moemento...
-
-        
+        if (thread.assistants[thread.assistants.length - 1].isAutomatic) {
+            if (isNewThread) {
+                console.log('Calll to create thread on IA');
+            } else {
+                console.log('Calll to create message on IA');
+            }
+        }
 
         //call to openai endpoints
 
