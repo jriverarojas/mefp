@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Instance } from "./instance.entity";
 import { Message } from "./message.entity";
+import { Assistant } from "./assistant.entity";
 
 @Entity()
 export class Thread {
@@ -22,4 +23,7 @@ export class Thread {
 
     @OneToMany(() => Message, message => message.thread)
     messages: Message[];
+
+    @ManyToMany(() => Assistant, assistant => assistant.threads)
+    assistants: Assistant[];
 }

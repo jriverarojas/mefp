@@ -13,11 +13,13 @@ import { Thread } from './entities/thread.entity';
 import { Message } from './entities/message.entity';
 import { ThreadService } from './services/thread.service';
 import { MessageService } from './services/message.service';
+import { Assistant } from './entities/assistant.entity';
+import { InstanceAssistant } from './entities/instance-assistant.entity';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Queue, Channel, Instance, Thread, Message]),
+    TypeOrmModule.forFeature([Queue, Channel, Instance, Thread, Message, Assistant, InstanceAssistant]),
     ConfigModule
   ],
   providers: [RedisService, WorkerService, QueueService, WaapiService, ThreadService, MessageService],

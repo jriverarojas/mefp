@@ -54,7 +54,7 @@ export class WaapiService {
 
         //if no assistant ... no hay un asistente disponible en este moemento...
 
-        //save message
+        
 
         //call to openai endpoints
 
