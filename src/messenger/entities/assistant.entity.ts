@@ -23,6 +23,4 @@ export class Assistant {
 
     @OneToMany(()=> InstanceAssistant, instanceAssistant => instanceAssistant.assistant)
     instanceAssistants: InstanceAssistant[];
-
-
 }
