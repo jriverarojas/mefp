@@ -52,9 +52,10 @@ export class WaapiService {
 
         //buscar o crear un thread
         const { isNewThread, thread } = await this.threadService.findOrCreateThread(instance, from);
+        const message = await this.messageService.createMessage(thread, taskPayload.data.message.body, taskPayload.id, 'incoming');
 
         //getAssistant
-        if (isNewThread) {
+        if (isNewThread || thread.assistants.length === 0) {
             
             let assistant = await this.assistantService.getAssistant(instance.id);
             if (!assistant) {
@@ -81,7 +82,7 @@ export class WaapiService {
 
         //call to openai endpoints
 
-        const message = await this.messageService.createMessage(thread, taskPayload.data.message.body, taskPayload.id, 'incoming');
+        
     }
 
     async sendMessage(config: any, externalId: string, toFrom: string, message: string) {
