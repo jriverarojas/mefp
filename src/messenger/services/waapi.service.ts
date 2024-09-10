@@ -53,7 +53,7 @@ export class WaapiService {
         //buscar o crear un thread
         const { isNewThread, thread } = await this.threadService.findOrCreateThread(instance, from);
         const message = await this.messageService.createMessage(thread, taskPayload.data.message.body, taskPayload.id, 'incoming');
-
+        console.log('THREAD:', thread);
         //getAssistant
         if (isNewThread || thread.assistants.length === 0) {
             
