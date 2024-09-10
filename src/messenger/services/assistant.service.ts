@@ -26,6 +26,8 @@ export class AssistantService {
             where: { instanceId, isDefault: true }
         });
 
+        console.log('instanceAssistant:', instanceAssistant);
+
         return instanceAssistant ? instanceAssistant.assistant : undefined;
     }
 }
