@@ -7,10 +7,13 @@ export class Assistant {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()//waapi, web, whatsapp
+    @Column()
     active: boolean;
 
-    @Column()//service to call on a new message
+    @Column()
+    type: string;
+
+    @Column()
     isAutomatic: boolean;
 
     @Column({type: 'text',  nullable: true})//config for channel actions

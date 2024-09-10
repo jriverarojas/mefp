@@ -16,6 +16,7 @@ import { MessageService } from './services/message.service';
 import { Assistant } from './entities/assistant.entity';
 import { InstanceAssistant } from './entities/instance-assistant.entity';
 import { AssistantService } from './services/assistant.service';
+import { AutomaticService } from './services/automatic.service';
 
 
 @Module({
@@ -23,7 +24,7 @@ import { AssistantService } from './services/assistant.service';
     TypeOrmModule.forFeature([Queue, Channel, Instance, Thread, Message, Assistant, InstanceAssistant]),
     ConfigModule
   ],
-  providers: [RedisService, WorkerService, QueueService, WaapiService, ThreadService, MessageService, AssistantService],
+  providers: [RedisService, WorkerService, QueueService, WaapiService, ThreadService, MessageService, AssistantService, AutomaticService],
   controllers: [QueueController]
   
 })

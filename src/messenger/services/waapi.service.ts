@@ -8,6 +8,7 @@ import { MessageService } from "./message.service";
 import { AssistantService } from "./assistant.service";
 import { RedisService } from "./redis.service";
 import { Thread } from "../entities/thread.entity";
+import { AutomaticService } from "./automatic.service";
 
 @Injectable()
 export class WaapiService {
@@ -18,6 +19,7 @@ export class WaapiService {
         private readonly messageService: MessageService,
         private readonly assistantService: AssistantService,
         private readonly redisService: RedisService,
+        private readonly automaticService: AutomaticService,
     ){}
 
     async execute(config: any, taskPayload:any): Promise<void> {
@@ -74,9 +76,9 @@ export class WaapiService {
 
         if (thread.assistants[thread.assistants.length - 1].isAutomatic) {
             if (isNewThread) {
-                console.log('Calll to create thread on IA');
+                await this.automaticService.initConversation(thread.assistants[thread.assistants.length - 1], 'waapi', instance.id, taskPayload.data.message.body);
             } else {
-                console.log('Calll to create message on IA');
+                await this.automaticService.createMessage(thread.assistants[thread.assistants.length - 1], 'waapi', instance.id, thread.externalId, taskPayload.data.message.body);
             }
         }
 
