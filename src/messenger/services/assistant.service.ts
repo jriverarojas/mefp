@@ -23,7 +23,8 @@ export class AssistantService {
 
     async getDefaultAssistant(instanceId: number): Promise<Assistant | undefined> {
         const instanceAssistant = await this.instanceAssistantRepository.findOne({
-            where: { instanceId, isDefault: true }
+            where: { instanceId, isDefault: true },
+            relations: ['assistant']
         });
 
         console.log('instanceAssistant:', instanceAssistant);
