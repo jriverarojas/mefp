@@ -1,13 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { Assistant } from "../entities/assistant.entity";
+import { OpenaiAservice } from "./openai.service";
 
 @Injectable()
 export class AutomaticService {
-    constructor() {}
-    async initConversation(assistant: Assistant, channel: string, instanceId: number, message: string): Promise<any> {
+    constructor(
+        private readonly openaiService: OpenaiAservice,
+    ) {}
+    async initConversation(assistant: Assistant, channel: string, instanceId: number, message: string, origin: string): Promise<any> {
         switch(assistant.type) {
             case 'openai':
-                console.log('OPEN AI start conversation');
+                this.openaiService.initConversation(assistant, channel, instanceId, message, origin);
                 break;
             default:
                 throw new Error(`Service ${assistant.type} not found`) 

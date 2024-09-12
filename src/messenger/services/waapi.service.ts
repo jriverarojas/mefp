@@ -76,7 +76,7 @@ export class WaapiService {
 
         if (thread.assistants[thread.assistants.length - 1].isAutomatic) {
             if (isNewThread) {
-                await this.automaticService.initConversation(thread.assistants[thread.assistants.length - 1], 'waapi', instance.id, taskPayload.data.message.body);
+                await this.automaticService.initConversation(thread.assistants[thread.assistants.length - 1], 'waapi', instance.id, taskPayload.data.message.body, from);
             } else {
                 await this.automaticService.createMessage(thread.assistants[thread.assistants.length - 1], 'waapi', instance.id, thread.externalId, taskPayload.data.message.body);
             }
