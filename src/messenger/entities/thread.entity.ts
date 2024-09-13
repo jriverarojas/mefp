@@ -12,6 +12,9 @@ export class Thread {
     externalInstance: string;
 
     @Column()
+    externalId: string;
+
+    @Column()
     expirationDate: Date;
 
     @Column()
