@@ -11,8 +11,8 @@ export class Thread {
     @Column()
     externalInstance: string;
 
-    @Column()
-    externalId: string;
+    @Column({type: 'varchar',  nullable: true})
+    externalId?: string;
 
     @Column()
     expirationDate: Date;
