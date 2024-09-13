@@ -36,6 +36,29 @@ export class OpenaiAservice {
     
     }
 
+    async createMessage(assistant: Assistant, channel: string, instanceId: number, threadId: string, message: string, origin: string): Promise<any> {
+        const configObj = this.getConfigObj(assistant);
+        this.initOpenAI(configObj.authorization);
+        let res: string;
+        await this.openai.beta.threads.messages.create(threadId, {
+            role: 'user',
+            content: message,
+        });
+
+        const run = await this.openai.beta.threads.runs.create(threadId, {
+            assistant_id: configObj.assistantId,
+        });
+        
+        res = await this.waitForResponse(run.thread_id, run.id);
+        const response = await this.handleResponse(res, channel, instanceId, origin);
+
+        return {
+            rundId: run.id,
+            threadId: run.thread_id,
+        }
+    
+    }
+
     private initOpenAI(authorization: string) {  
         this.openai = new OpenAI({
             apiKey: authorization,

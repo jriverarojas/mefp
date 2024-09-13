@@ -8,20 +8,21 @@ export class AutomaticService {
         private readonly openaiService: OpenaiAservice,
     ) {}
     async initConversation(assistant: Assistant, channel: string, instanceId: number, message: string, origin: string): Promise<any> {
+        let res;
         switch(assistant.type) {
             case 'openai':
-                this.openaiService.initConversation(assistant, channel, instanceId, message, origin);
+                res = await this.openaiService.initConversation(assistant, channel, instanceId, message, origin);
                 break;
             default:
                 throw new Error(`Service ${assistant.type} not found`) 
         }
-        return true;
+        return res;
     }
 
-    async createMessage(assistant: Assistant, channel: string, instanceId: number, threadId: string, message: string): Promise<any> {
+    async createMessage(assistant: Assistant, channel: string, instanceId: number, threadId: string, message: string, origin: string): Promise<any> {
         switch(assistant.type) {
             case 'openai':
-                console.log('OPEN AI create message');
+                this.openaiService.createMessage(assistant, channel, instanceId, threadId, message, origin);
                 break;
             default:
                 throw new Error(`Service ${assistant.type} not found`) 
