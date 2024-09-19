@@ -21,6 +21,12 @@ export class User {
     @Column({ default: true})
     active: boolean;
 
+    @Column({ nullable: true, select: false})
+    apiKeyExpiration?: Date;
+
+    @Column({ nullable: true, select: false})
+    apiKeyLastDigits?: string;
+
     @ManyToMany(() => Role, role => role.users)
     @JoinTable()
     roles: Role[];
