@@ -7,9 +7,8 @@ import { UserService } from "../service/user.service";
 export class UserController {
     constructor(private readonly userService: UserService) {}
     
-    @Post('create-application-user')
-    createApplicationUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-        const userDto = {...createUserDto, isApiUser: false};
-        return this.userService.create(userDto);
+    @Post()
+    createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+        return this.userService.create(createUserDto);
     }
 }
