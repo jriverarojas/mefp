@@ -3,6 +3,7 @@ import { Assistant } from "../entities/assistant.entity";
 import OpenAI from "openai";
 import { threadId } from "worker_threads";
 import { RedisService } from "./redis.service";
+import { Run } from "openai/resources/beta/threads/runs/runs";
 
 @Injectable()
 export class OpenaiAservice {
@@ -16,7 +17,7 @@ export class OpenaiAservice {
     async initConversation(assistant: Assistant, channel: string, instanceId: number, message: string, origin: string): Promise<any> {
         const configObj = this.getConfigObj(assistant);
         this.initOpenAI(configObj.authorization);
-        let res: string;
+        let res: string | Run;
         const run = await this.openai.beta.threads.createAndRun({
             assistant_id: configObj.assistantId,
             thread: {
@@ -39,7 +40,7 @@ export class OpenaiAservice {
     async createMessage(assistant: Assistant, channel: string, instanceId: number, threadId: string, message: string, origin: string): Promise<any> {
         const configObj = this.getConfigObj(assistant);
         this.initOpenAI(configObj.authorization);
-        let res: string;
+        let res: string | Run;
         await this.openai.beta.threads.messages.create(threadId, {
             role: 'user',
             content: message,
@@ -70,13 +71,17 @@ export class OpenaiAservice {
         return configObj;
     }
 
-    private async waitForResponse(threadId: string, runId: string): Promise <string> {
+    private async waitForResponse(threadId: string, runId: string): Promise <string | Run> {
         const runStatus = await this.waitForRunCompletion(threadId, runId);
-        if (runStatus == 'not_processed') {
-            return 'Hay un problema al procesar su mensaje, intentelo nuevamente mas tarde';
-        } else {
-            const assistantResponse = await this.getAssistantResponse(threadId);
-            return assistantResponse;
+        if (this.isRun(runStatus)) {
+            return runStatus;
+        } else{
+            if (runStatus == 'not_processed') {
+                return 'Hay un problema al procesar su mensaje, intentelo nuevamente mas tarde';
+            } else {
+                const assistantResponse = await this.getAssistantResponse(threadId);
+                return assistantResponse;
+            }
         }
     }
 
@@ -93,7 +98,7 @@ export class OpenaiAservice {
         return lastMessage.content[0].text.value;
     }
 
-    private async waitForRunCompletion(threadId: string, runId: string): Promise <string> {
+    private async waitForRunCompletion(threadId: string, runId: string): Promise <string|Run> {
         let run;
         let factor = 1
         do {
@@ -110,21 +115,59 @@ export class OpenaiAservice {
         } while ((run.status === 'queued' || run.status === 'in_progress') && factor < 3);
 
         if (run.status === 'requires_action') {
-            return 'function';
+            return run;
         }
 
         return (run.status === 'cancelled' || run.status === 'failed' || run.status === 'expired' || run.status === 'queued' || run.status === 'in_progress') ? 'not_processed' : run.status;
     }
 
-    private async handleResponse(response: string, channel: string, instanceId: number, origin: string): Promise<string> {
-        const queueId = await this.redisService.addToQueue({
-            toFrom: origin,
-            message: response,
-            type: 'out',
-            channel,
-            instance: `${instanceId}`, 
-        });
-        return queueId;
+    private async handleResponse(response: string | Run, channel: string, instanceId: number, origin: string): Promise<string> {
+        
+        if (this.isRun(response)) {
+            if (response.status === 'requires_action' && response.required_action && response.required_action.submit_tool_outputs
+                && response.required_action.submit_tool_outputs.tool_calls)  {
+                const functions = [];
+
+                for (const toolCall of response.required_action.submit_tool_outputs.tool_calls) {
+                    functions.push({ id: toolCall.id, name: toolCall.function.name, params: toolCall.function.arguments })
+                }
+
+                const queueId = await this.redisService.addToQueue({
+                    type: 'function',
+                    channel,
+                    instance: `${instanceId}`, 
+                    firedBy: 'openai',
+                    runId: response.id,
+                    threadId,
+                    origin,
+                    functions,
+                });
+
+                return '__running_function';
+
+
+            }
+
+        } else {
+            const queueId = await this.redisService.addToQueue({
+                toFrom: origin,
+                message: response,
+                type: 'out',
+                channel,
+                instance: `${instanceId}`, 
+            });
+            return queueId;
+        }
+
+    }
+
+    private isRun(obj: any): obj is Run {
+        return (
+            obj &&
+            typeof obj === 'object' &&
+            typeof obj.id === 'string' &&
+            typeof obj.status === 'string'
+        )
 
     }
 }
