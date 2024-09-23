@@ -45,7 +45,7 @@ export class QueueService {
             console.log('FUNCTIONS=======>', myFunctions)
         }
         try {
-            await this.execute(task.type === 'function' ? 'function' : channel.code, JSON.parse(channel.config), task);
+            await this.execute(task.type === 'function' ? 'function' : channel.code, task.type === 'function' ? myFunctions : JSON.parse(channel.config), task);
         } catch (error) {
             console.log('ERROR!!!!!', error);
             myqueue.errorReason = error.message;
@@ -57,13 +57,16 @@ export class QueueService {
         await this.queueRepository.save(myqueue);
     }
 
-    private async execute(channel: string, config: any, taskPayload: any): Promise<void> {
+    private async execute(channel: string, configOrFunction: any, taskPayload: any): Promise<void> {
         switch(channel) {
             case 'waapi': 
-                this.waapiService.execute(config, taskPayload);
+                this.waapiService.execute(configOrFunction, taskPayload);
                 break;
             case 'web': 
                 console.log('WEB SERVICE!!!!');
+                break;
+            case 'function': 
+                console.log('EXECUTE FUNCION SERVICE!!!!');
                 break;
             default:
                 throw new Error(`Service ${channel} not found`);
