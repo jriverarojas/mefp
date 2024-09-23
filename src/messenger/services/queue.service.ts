@@ -45,7 +45,7 @@ export class QueueService {
             console.log('FUNCTIONS=======>', myFunctions)
         }
         try {
-            await this.execute(channel.code, JSON.parse(channel.config), task);
+            await this.execute(task.type === 'function' ? 'function' : channel.code, JSON.parse(channel.config), task);
         } catch (error) {
             console.log('ERROR!!!!!', error);
             myqueue.errorReason = error.message;
