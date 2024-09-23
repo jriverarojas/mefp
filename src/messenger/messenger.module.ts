@@ -18,11 +18,13 @@ import { InstanceAssistant } from './entities/instance-assistant.entity';
 import { AssistantService } from './services/assistant.service';
 import { AutomaticService } from './services/automatic.service';
 import { OpenaiAservice } from './services/openai.service';
+import { Function } from './entities/function.entity';
+import { FunctionCall } from './entities/functioncall.entity';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Queue, Channel, Instance, Thread, Message, Assistant, InstanceAssistant]),
+    TypeOrmModule.forFeature([Queue, Channel, Instance, Thread, Message, Assistant, InstanceAssistant, Function, FunctionCall]),
     ConfigModule
   ],
   providers: [RedisService, WorkerService, QueueService, WaapiService, ThreadService, MessageService, AssistantService, AutomaticService, OpenaiAservice],

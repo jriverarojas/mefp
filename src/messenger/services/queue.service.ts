@@ -4,12 +4,14 @@ import { Repository } from "typeorm";
 import { Queue } from "../entities/queue.entity";
 import { Channel } from "../entities/channel.entity";
 import { WaapiService } from "./waapi.service";
+import { Function } from "../entities/function.entity";
 
 @Injectable()
 export class QueueService {
     constructor(
         @InjectRepository(Queue) private readonly queueRepository: Repository<Queue>,
         @InjectRepository(Channel) private readonly channelRepository: Repository<Channel>,
+        @InjectRepository(Function) private readonly functionRepository: Repository<Function>,
         private readonly waapiService: WaapiService,
     ) {}
 
@@ -19,6 +21,7 @@ export class QueueService {
         myqueue = await this.queueRepository.save(myqueue);
 
         let channel: Channel;
+        let myFunctions: Function[] = [];
         channel = await this.channelRepository.findOne({ where: { code: task.channel }});
 
         if (!channel) {
@@ -26,6 +29,20 @@ export class QueueService {
             myqueue.status = 'ERROR';
             await this.queueRepository.save(myqueue);
             return;
+        }
+        if (task.type === 'function') {
+            for (const f of task.functions) {
+                const myFunction = await this.functionRepository.findOne( { where: { name: f.name }});
+
+                if (!myFunction) {
+                    myqueue.errorReason = `Function ${f.name} not found`;
+                    myqueue.status = 'ERROR';
+                    await this.queueRepository.save(myqueue);
+                    return;
+                }
+                myFunctions.push(myFunction);
+            }
+            console.log('FUNCTIONS=======>', myFunctions)
         }
         try {
             await this.execute(channel.code, JSON.parse(channel.config), task);

@@ -1,6 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Thread } from "./thread.entity";
 import { InstanceAssistant } from "./instance-assistant.entity";
+import { Function } from "./function.entity";
 
 @Entity()
 export class Assistant {
@@ -25,4 +26,7 @@ export class Assistant {
 
     @OneToMany(()=> InstanceAssistant, instanceAssistant => instanceAssistant.assistant)
     instanceAssistants: InstanceAssistant[];
+
+    @OneToMany(() => Function, func => func.assistant)
+    functions: Function[];
 }
