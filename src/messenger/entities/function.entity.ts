@@ -13,11 +13,11 @@ export class Function {
     @Column()
     url: string;
 
-    @Column('text')
-    params: string;
+    @Column({ nullable: true, type: 'text' })
+    params?: string;
 
-    @Column('text')
-    headers: string;
+    @Column({ nullable: true, type: 'text' })
+    headers?: string;
 
     @Column()
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -25,8 +25,8 @@ export class Function {
     @Column()
     responseType: 'xml' | 'json';
 
-    @Column('text')
-    templateSource: string;
+    @Column({ nullable: true, type: 'text' })
+    templateSource?: string;
 
     @ManyToOne(() => Assistant, assistant => assistant.functions)
     assistant: Assistant;
@@ -36,5 +36,8 @@ export class Function {
 
     @Column()
     assistantId: number;
+
+    @Column({default: false})
+    sendBodyParams: boolean;
 
 }
