@@ -15,22 +15,22 @@ export class FunctionService {
         private functionCallRepository: Repository<FunctionCall>) {}
 
     async execute(functionEntities: Function[], queueItem: any) {
-        console.log('functionEntities', functionEntities, queueItem);
+        
         const { functions, threadId, instance, channel, origin, firedBy, runId } = queueItem;
         for (const f of functionEntities) {
             const functionParams = functions[0].params;
             const params = JSON.parse(functionParams);
             const url = f.sendBodyParams ? f.url : this.replaceUrlParams(f.url, params);
 
-            console.log('URL', url);
-
-            /*const response = await axios({
+            const response = await axios({
                 method: f.method,
                 url,
                 headers: f.headers ? JSON.parse(f.headers) : {},
                 ...(f.sendBodyParams ? {data: params}: {}),
 
-            });*/
+            });
+
+            console.log('RESPONSE====>', response.data);
         }
     }
 
