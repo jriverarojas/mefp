@@ -15,6 +15,7 @@ export class FunctionService {
         private functionCallRepository: Repository<FunctionCall>) {}
 
     async execute(functionEntities: Function[], queueItem: any) {
+        console.log('functionEntities', functionEntities, queueItem);
         const { functions, threadId, instance, channel, origin, firedBy, runId } = queueItem;
         for (const f of functionEntities) {
             const functionParams = functions[0].params;
