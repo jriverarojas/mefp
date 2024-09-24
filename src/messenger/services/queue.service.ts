@@ -5,6 +5,7 @@ import { Queue } from "../entities/queue.entity";
 import { Channel } from "../entities/channel.entity";
 import { WaapiService } from "./waapi.service";
 import { Function } from "../entities/function.entity";
+import { FunctionService } from "./function.service";
 
 @Injectable()
 export class QueueService {
@@ -13,6 +14,7 @@ export class QueueService {
         @InjectRepository(Channel) private readonly channelRepository: Repository<Channel>,
         @InjectRepository(Function) private readonly functionRepository: Repository<Function>,
         private readonly waapiService: WaapiService,
+        private readonly functionService: FunctionService,
     ) {}
 
     async processTask(task: any): Promise<void> {
@@ -66,7 +68,7 @@ export class QueueService {
                 console.log('WEB SERVICE!!!!');
                 break;
             case 'function': 
-                console.log('EXECUTE FUNCION SERVICE!!!!');
+                this.functionService.execute(configOrFunction, taskPayload);
                 break;
             default:
                 throw new Error(`Service ${channel} not found`);
