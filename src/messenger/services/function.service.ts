@@ -30,7 +30,10 @@ export class FunctionService {
 
             });
 
-            console.log('RESPONSE====>', response.data);
+            const template = Handlebars.compile(f.templateSource);
+            const result = template(response.data);
+
+            console.log(result);
         }
     }
 
