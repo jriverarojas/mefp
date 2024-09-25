@@ -15,7 +15,6 @@ export class OpenaiAservice {
     }
 
     async initConversation(assistant: Assistant, channel: string, instanceId: number, message: string, origin: string): Promise<any> {
-        console.log('initConversation instanceId',instanceId);
         const configObj = this.getConfigObj(assistant);
         this.initOpenAI(configObj.authorization);
         let res: string | Run;
@@ -39,7 +38,6 @@ export class OpenaiAservice {
     }
 
     async createMessage(assistant: Assistant, channel: string, instanceId: number, threadId: string, message: string, origin: string): Promise<any> {
-        console.log('createMessage instanceId',instanceId);
         const configObj = this.getConfigObj(assistant);
         this.initOpenAI(configObj.authorization);
         let res: string | Run;
@@ -133,6 +131,8 @@ export class OpenaiAservice {
                 for (const toolCall of response.required_action.submit_tool_outputs.tool_calls) {
                     functions.push({ id: toolCall.id, name: toolCall.function.name, params: toolCall.function.arguments })
                 }
+
+                console.log('handleResponse instanceId:', instanceId);
 
                 const queueId = await this.redisService.addToQueue({
                     type: 'function',
