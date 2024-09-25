@@ -28,7 +28,7 @@ export class OpenaiAservice {
           });
         
         res = await this.waitForResponse(run.thread_id, run.id);
-        const response = await this.handleResponse(res, channel, instanceId, origin, configObj);
+        const response = await this.handleResponse(res, channel, instanceId, origin, run.thread_id, configObj);
 
         return {
             rundId: run.id,
@@ -51,7 +51,7 @@ export class OpenaiAservice {
         });
         
         res = await this.waitForResponse(run.thread_id, run.id);
-        const response = await this.handleResponse(res, channel, instanceId, origin, configObj);
+        const response = await this.handleResponse(res, channel, instanceId, origin, threadId, configObj);
 
         return {
             rundId: run.id,
@@ -121,7 +121,7 @@ export class OpenaiAservice {
         return (run.status === 'cancelled' || run.status === 'failed' || run.status === 'expired' || run.status === 'queued' || run.status === 'in_progress') ? 'not_processed' : run.status;
     }
 
-    private async handleResponse(response: string | Run, channel: string, instanceId: number, origin: string, assistantConfig: any): Promise<string> {
+    private async handleResponse(response: string | Run, channel: string, instanceId: number, origin: string, threadId: string, assistantConfig: any): Promise<string> {
         
         if (this.isRun(response)) {
             if (response.status === 'requires_action' && response.required_action && response.required_action.submit_tool_outputs
@@ -180,7 +180,7 @@ export class OpenaiAservice {
         );
         res = await this.waitForResponse(run.thread_id, run.id);
 
-        const response = await this.handleResponse(res, channel, instanceId, origin, assistantConfig);
+        const response = await this.handleResponse(res, channel, instanceId, origin, threadId, assistantConfig);
 
         return {
             runId: run.id,
