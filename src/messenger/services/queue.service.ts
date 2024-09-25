@@ -44,7 +44,6 @@ export class QueueService {
                 }
                 myFunctions.push(myFunction);
             }
-            console.log('FUNCTIONS=======>', myFunctions)
         }
         try {
             await this.execute(task.type === 'function' ? 'function' : channel.code, task.type === 'function' ? myFunctions : JSON.parse(channel.config), task);

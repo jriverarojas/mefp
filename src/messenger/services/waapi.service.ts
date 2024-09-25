@@ -26,7 +26,6 @@ export class WaapiService {
         if (taskPayload.type === 'out') {
             await this.handleOutgoingMessage(config, taskPayload);
         } else if (taskPayload.type === 'in') {
-            console.log('INCOMING!!!!!', taskPayload);
             await this.handleIncommingMessage(config, taskPayload);
         } else {
             throw new Error(`Not implemented`)

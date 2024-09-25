@@ -34,7 +34,6 @@ export class AutomaticService {
         switch(type) {
             case 'openai':
                 this.openaiService.handleRequireFunction(threadId, instanceId, channel, origin, functions, runId, assistantConfig);
-                console.log('CALL to openai handleRequireFunction');
                 break;
             default:
                 throw new Error(`Service ${type} not found`); 

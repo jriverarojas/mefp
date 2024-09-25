@@ -122,7 +122,6 @@ export class OpenaiAservice {
     }
 
     private async handleResponse(response: string | Run, channel: string, instanceId: number, origin: string, threadId: string, assistantConfig: any): Promise<string> {
-        console.log('handleResponse instanceId:', instanceId);
         if (this.isRun(response)) {
             if (response.status === 'requires_action' && response.required_action && response.required_action.submit_tool_outputs
                 && response.required_action.submit_tool_outputs.tool_calls)  {
@@ -131,8 +130,6 @@ export class OpenaiAservice {
                 for (const toolCall of response.required_action.submit_tool_outputs.tool_calls) {
                     functions.push({ id: toolCall.id, name: toolCall.function.name, params: toolCall.function.arguments })
                 }
-
-                
 
                 const queueId = await this.redisService.addToQueue({
                     type: 'function',
@@ -181,7 +178,6 @@ export class OpenaiAservice {
             },
         );
         res = await this.waitForResponse(run.thread_id, run.id);
-        console.log('call to handleResponse', res, channel, instanceId, origin, threadId, assistantConfig);
         const response = await this.handleResponse(res, channel, instanceId, origin, threadId, assistantConfig);
 
         return {
