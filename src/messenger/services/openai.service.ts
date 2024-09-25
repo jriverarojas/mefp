@@ -179,7 +179,7 @@ export class OpenaiAservice {
             },
         );
         res = await this.waitForResponse(run.thread_id, run.id);
-
+        console.log('handleRequireFunction res', res);
         const response = await this.handleResponse(res, channel, instanceId, origin, threadId, assistantConfig);
 
         return {
