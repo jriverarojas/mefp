@@ -15,6 +15,7 @@ export class OpenaiAservice {
     }
 
     async initConversation(assistant: Assistant, channel: string, instanceId: number, message: string, origin: string): Promise<any> {
+        console.log('initConversation instanceId',instanceId);
         const configObj = this.getConfigObj(assistant);
         this.initOpenAI(configObj.authorization);
         let res: string | Run;
@@ -38,6 +39,7 @@ export class OpenaiAservice {
     }
 
     async createMessage(assistant: Assistant, channel: string, instanceId: number, threadId: string, message: string, origin: string): Promise<any> {
+        console.log('createMessage instanceId',instanceId);
         const configObj = this.getConfigObj(assistant);
         this.initOpenAI(configObj.authorization);
         let res: string | Run;
