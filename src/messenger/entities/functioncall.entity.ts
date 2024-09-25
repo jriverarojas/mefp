@@ -14,4 +14,7 @@ export class FunctionCall {
 
     @ManyToOne(() => Function, func => func.functionCalls)
     function: Function;
+
+    @Column()
+    functionId: number;
 }

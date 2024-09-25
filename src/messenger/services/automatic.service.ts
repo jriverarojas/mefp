@@ -29,4 +29,16 @@ export class AutomaticService {
         }
         return true;
     }
+
+    async handleRequireFunction(type: string, threadId: string, instanceId: number, channel: string, origin: string, functions: any, runId: string, assistantConfig: any): Promise<any> {
+        switch(type) {
+            case 'openai':
+                this.openaiService.handleRequireFunction(threadId, instanceId, channel, origin, functions, runId, assistantConfig);
+                console.log('CALL to openai handleRequireFunction');
+                break;
+            default:
+                throw new Error(`Service ${type} not found`); 
+        }
+        return true;
+    }
 }
