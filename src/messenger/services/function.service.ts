@@ -46,7 +46,7 @@ export class FunctionService {
             await this.functionCallRepository.save(functionCall);
             index++;
 
-            this.automaticService.handleRequireFunction(firedBy, threadId, instance.id, channel, origin, functions, runId, assistantConfig);
+            this.automaticService.handleRequireFunction(firedBy, threadId, instance, channel, origin, functions, runId, assistantConfig);
 
             
         }
