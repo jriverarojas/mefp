@@ -137,7 +137,7 @@ export class OpenaiAservice {
                 const queueId = await this.redisService.addToQueue({
                     type: 'function',
                     channel,
-                    instance: `${instanceId}`, 
+                    instance: instanceId, 
                     firedBy: 'openai',
                     runId: response.id,
                     threadId,
