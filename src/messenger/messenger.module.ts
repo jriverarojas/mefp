@@ -21,6 +21,8 @@ import { OpenaiAservice } from './services/openai.service';
 import { Function } from './entities/function.entity';
 import { FunctionCall } from './entities/functioncall.entity';
 import { FunctionService } from './services/function.service';
+import { WebService } from './services/web.service';
+import { WebsocketGateway } from './websocket.gateway';
 
 
 @Module({
@@ -28,7 +30,7 @@ import { FunctionService } from './services/function.service';
     TypeOrmModule.forFeature([Queue, Channel, Instance, Thread, Message, Assistant, InstanceAssistant, Function, FunctionCall]),
     ConfigModule
   ],
-  providers: [RedisService, WorkerService, QueueService, WaapiService, ThreadService, MessageService, AssistantService, AutomaticService, OpenaiAservice, FunctionService],
+  providers: [RedisService, WorkerService, QueueService, WaapiService, ThreadService, MessageService, AssistantService, AutomaticService, OpenaiAservice, FunctionService, WebService, WebsocketGateway],
   controllers: [QueueController]
   
 })

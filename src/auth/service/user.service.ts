@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { CreateUserDto } from "../dto/create-user.dto"; 
-import { Role } from "../entities/role.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { JwtService } from "@nestjs/jwt";
+import { Request } from "express";
 
 @Injectable()
 export class UserService {
@@ -13,6 +13,36 @@ export class UserService {
         private userRepository: Repository<User>,
         private jwtService: JwtService,
     ) {}
+
+
+    async generateRefreshToken(request: any): Promise<any> {
+        const id = request.userId;
+        const user = await this.findOne(id);
+
+        if (user.isApiUser) {
+            const payload = { email: user.email, sub: user.id };
+            const refreshToken = this.jwtService.sign(payload, { expiresIn: '48h' });
+            const accessToken = this.jwtService.sign(payload, { expiresIn: '30m' });
+            return {refreshToken, accessToken };
+        } else {
+            throw new BadRequestException('Generate Refresh Token is only allowed for API users.');
+        }
+    }
+
+    async generateAccessToken(request: any): Promise<any> {
+        const id = request.userId;
+        const user = await this.findOne(id);
+
+        if (user.isApiUser) {
+            const payload = { email: user.email, sub: user.id };
+            const accessToken = this.jwtService.sign(payload, { expiresIn: '30m' });
+            return { accessToken };
+        } else {
+            throw new BadRequestException('Generate Refresh Token is only allowed for API users.');
+        }
+        
+        
+    }
 
     async create(createUserDto: CreateUserDto): Promise<any> {
         let user = this.userRepository.create(createUserDto);

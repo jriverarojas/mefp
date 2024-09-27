@@ -6,6 +6,7 @@ import { Channel } from "../entities/channel.entity";
 import { WaapiService } from "./waapi.service";
 import { Function } from "../entities/function.entity";
 import { FunctionService } from "./function.service";
+import { WebService } from "./web.service";
 
 @Injectable()
 export class QueueService {
@@ -14,6 +15,7 @@ export class QueueService {
         @InjectRepository(Channel) private readonly channelRepository: Repository<Channel>,
         @InjectRepository(Function) private readonly functionRepository: Repository<Function>,
         private readonly waapiService: WaapiService,
+        private readonly webService: WebService,
         private readonly functionService: FunctionService,
     ) {}
 
@@ -64,7 +66,7 @@ export class QueueService {
                 this.waapiService.execute(configOrFunction, taskPayload);
                 break;
             case 'web': 
-                console.log('WEB SERVICE!!!!');
+                this.webService.execute(configOrFunction, taskPayload);
                 break;
             case 'function': 
                 this.functionService.execute(configOrFunction, taskPayload);
