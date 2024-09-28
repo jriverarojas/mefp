@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Instance } from "../entities/instance.entity";
 import { Repository } from "typeorm";
-import axios from "axios";
 import { ThreadService } from "./thread.service";
 import { MessageService } from "./message.service";
 import { AssistantService } from "./assistant.service";
 import { RedisService } from "./redis.service";
 import { Thread } from "../entities/thread.entity";
 import { AutomaticService } from "./automatic.service";
+import { WebsocketGateway } from "../websocket.gateway";
 
 @Injectable()
 export class WebService {
@@ -20,12 +20,12 @@ export class WebService {
         private readonly assistantService: AssistantService,
         private readonly redisService: RedisService,
         private readonly automaticService: AutomaticService,
+        private readonly websocketGateway: WebsocketGateway,
     ){}
 
     async execute(config: any, taskPayload:any): Promise<void> {
         if (taskPayload.type === 'out') {
-            throw new Error(`Not implemented`)
-            //await this.handleOutgoingMessage(config, taskPayload);
+            await this.handleOutgoingMessage(config, taskPayload);
         } else if (taskPayload.type === 'in') {
             await this.handleIncommingMessage(config, taskPayload);
         } else {
@@ -33,7 +33,7 @@ export class WebService {
         }
     }
 
-    /*async handleOutgoingMessage(config: any, taskPayload:any): Promise<void> {
+    async handleOutgoingMessage(config: any, taskPayload:any): Promise<void> {
         const instance = await this.instanceRepository.findOne({ where: { id: taskPayload.instance }});
         if (!instance) {
             throw new Error(`Instance ID: ${taskPayload.instance} not found`)
@@ -42,8 +42,8 @@ export class WebService {
         //buscar o crear un thread
         const { thread } = await this.threadService.findOrCreateThread(instance, taskPayload.toFrom);
         const message = await this.messageService.createMessage(thread, taskPayload.message, taskPayload.id, 'outgoing', taskPayload.refId);
-        const response = await this.sendMessage(config, instance.externalId, taskPayload.toFrom, taskPayload.message);
-    }*/
+        this.websocketGateway.sendMessage(taskPayload.toFrom, message);
+    }
 
     async handleIncommingMessage(config: any, taskPayload:any): Promise<void> {
         const instance = await this.instanceRepository.findOne({ where: { id: taskPayload.instance }});
